@@ -232,35 +232,35 @@ http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b0
 	
 7、删除文件
 
-一般情况下，你通常直接在文件管理器中把没用的文件删了，或者用rm命令删了：
+    一般情况下，你通常直接在文件管理器中把没用的文件删了，或者用rm命令删了：
 
-$ rm test.txt
+    $ rm test.txt
 
-现在你有两个选择，一是确实要从版本库中删除该文件，那就用命令git rm删掉，并且git commit：
+    现在你有两个选择，一是确实要从版本库中删除该文件，那就用命令git rm删掉，并且git commit：
 
-$ git rm test.txt
-rm 'test.txt'
-$ git commit -m "remove test.txt"
-[master d17efd8] remove test.txt
- 1 file changed, 1 deletion(-)
- delete mode 100644 test.txt
+    $ git rm test.txt
+    rm 'test.txt'
+    $ git commit -m "remove test.txt"
+    [master d17efd8] remove test.txt
+    1 file changed, 1 deletion(-)
+    delete mode 100644 test.txt
  
- 现在，文件就从版本库中被删除了。
+    现在，文件就从版本库中被删除了。
 
-另一种情况是删错了，因为版本库里还有呢，所以可以很轻松地把误删的文件恢复到最新版本：
+    另一种情况是删错了，因为版本库里还有呢，所以可以很轻松地把误删的文件恢复到最新版本：
 
-$ git checkout -- test.txt
+    $ git checkout -- test.txt
 
-git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
+    git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
 
 小结
 
-命令git rm用于删除一个文件。如果一个文件已经被提交到版本库，那么你永远不用担心误删，但是要小心，你只能恢复文件到最新版本，你会丢失最近一次提交后你修改的内容。
+    命令git rm用于删除一个文件。如果一个文件已经被提交到版本库，那么你永远不用担心误删，但是要小心，你只能恢复文件到最新版本，你会丢失最近一次提交后你修改的内容。
 
 8、远程仓库
     第1步：创建SSH Key。在用户主目录下，看看有没有.ssh目录，如果有，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：
 
-$ ssh-keygen -t rsa -C "youremail@example.com"
+    $ ssh-keygen -t rsa -C "youremail@example.com"
 
     第2步：登陆GitHub，打开“Account settings”，“SSH Keys”页面：
 
@@ -354,5 +354,53 @@ $ ssh-keygen -t rsa -C "youremail@example.com"
             $ git branch
                 * dev
                 master
+
+    现在，我们把dev分支的工作成果合并到master分支上：
+
+        $ git merge dev
+
+    git merge命令用于合并指定分支到当前分支。合并后，再查看readme.txt的内容，就可以看到，和dev分支的最新提交是完全一样的。
+
+    git merge命令用于合并指定分支到当前分支。合并后，再查看readme.txt的内容，就可以看到，和dev分支的最新提交是完全一样的。
+
+        $ git branch -d dev
+
+    因为创建、合并和删除分支非常快，所以Git鼓励你使用分支完成某个任务，合并后再删掉分支，这和直接在master分支上工作效果是一样的，但过程更安全。
+
+    小结
+
+    Git鼓励大量使用分支：
+
+        查看分支：git branch
+
+        创建分支：git branch <name>
+
+        切换分支：git checkout <name>
+
+        创建+切换分支：git checkout -b <name>
+
+        合并某分支到当前分支：git merge <name>
+
+        删除分支：git branch -d <name>
     
-	
+12、解决冲突
+
+    $ git checkout -b feature1创建一个分支
+
+    $ git checkout master切换到master
+
+    $ git merge feature1全并feature1分支
+
+    
+    $git status查看冲突状态
+
+    用带参数的git log也可以看到分支的合并情况：
+    $ git log --graph --pretty=oneline --abbrev-commit
+
+    $ git branch -d feature1删除
+
+    小结
+
+    当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。
+
+    用git log --graph命令可以看到分支合并图。
