@@ -1,0 +1,12 @@
+github连接出现Bad file number问题
+SSH -vT git@github.com
+SSH -T git@github.com
+http://rangercyh.blog.51cto.com/1444712/749490
+------------------------------------------------------
+//尝试下面的配置，存入config放到rsa相同目录下：
+Host github.com
+User songxiafeng
+Hostname ssh.github.com
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/id_rsa
+port 443
