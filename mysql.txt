@@ -1,0 +1,858 @@
+﻿//兄弟连 GLF
+01 MySQL数据库管理系统概述
+    环境变量设置
+    CMD:    cd ..上一层
+            cd 文件名  到指定文件名的文件夹
+
+    MySQL的架构
+        c/s client / server
+
+        MySQL DBMS
+
+        客户端  服务器--数据库--数据表（记录、字段）
+
+    PHP程序员主要学习哪些数据库的操作
+        
+        DBA
+
+        程序员：
+            
+            一、为你的项目设计表
+
+            二、使用SQL语句 （SQL编程）
+
+            其它都可以用工具完成
+
+    MySQL的目录结构
+        my.ini  bin/  data/
+
+
+    了解数据库的SQL语句操作
+        SQL ( Structured Query Language )
+
+            DDL 
+                create database 库名;
+                create table [库名.]表名;
+                    use 库名 
+                        create table 表名;
+                drop tablebase 库名;
+                drop table 表名;
+            DML
+                insert into users(id,name) values('1','zhangshan');
+                update users set name='aa',age='10' where id='10';
+                delete from 表名 where id='2';
+
+            DQL 
+
+                select * from 表名;
+
+            DCL
+
+            \S 看状态
+            show databases 看所有的数据库;
+            show tables 看所有表;
+            desc 看表结构
+            show variables看配置文件中的变量
+
+
+        创建数据库 create database xxx if not exists xsphpdb;
+
+        选择一个库做为默认的数据库 use xxx;
+
+        帮助的使用
+
+        1、执行SQL语句，连接到数据库服务器
+            mysql -h localhost -u root -p 回车
+            Enter password :******;
+            
+            \s查看状态
+
+            show variables; 查看配置文件
+
+                show variables like 'port';查看某个配置文件
+                show variables like '%time%';模糊查看某个配置文件
+
+            show databases;显示所有的数据库
+        2、创建库
+
+            create database xsphpdb; 创建名为xsphpdb的数据库；
+
+            create database if not exists xsphpdb;
+            创建名为xsphpdb的数据库如果不存在（php编程的时候用得着）；
+
+            drop database xsphpdb;删除xsphpdb的数据库;
+
+            drop database if exists xsphpdb ;删除xsphpdb的数据库如果存在;
+
+        3、选择数据库做为默认的库 use xsphpdb;
+            
+                use xsphpdb;设置默认库xsphpdb;
+                
+                show tables; 显示当前库的所有表；
+
+                desc users;查看users表的结构
+
+                create table users(id int,name char(30),age int , sex
+                char(3)); 创建名为users的表
+
+                drop table if exists users; 删除表users;
+
+                
+                DML操作（数据库数据操作）
+                insert into users
+                values(1,'zhangsan','10','man');所表中插入数据
+
+                insert into users(age,sex,id,name)
+                valuse('10','nv','8','wagnwu');可以不按默认数据顺序输入;
+
+                update users set name='lili' where id='2';修改数据
+
+                update users set name='lili',age='21',sex='man' where
+                id='2'修改多个数据;
+
+                delete from users where id=2;
+
+
+        帮助的使用
+
+            ? contents  查帮助可以查到的帮助内容
+
+            ？ datatypes 数据库支持的数据类型
+                ? int显示int类型的描述
+
+            ? show 查看show 的用法
+   
+
+02 MySQL创建数据表（上）
+
+    一、什么是数据表;
+
+    二、创建数据表的SQL语句模型
+
+        DDL
+
+        CREATE TABLE [IF NOT EXISTS] 表名称(
+            字段1 列类型 [属性] [索引]，
+            字段2 列类型 [属性] [索引]，
+            ...
+            字段n 列类型 [属性] [索引]
+        ) [表类型] [表字符集];
+
+
+        表名称和字段名 需要我们自己定义名称
+
+        users 
+        articles
+
+        SQL是不区分大小写的，但是表就是一个文件名，windows不区分大小写，linux区分大小写：
+            1、一定要有意思 （英文或英文缩写）
+            2、自己定义的名称最好都小写
+            3、SQL语句都大写
+
+
+    三、创建表的列类型
+
+        细分都是按空间大小区分的
+
+        数据库是 “量” 10000000条记录
+
+        可以存下就行
+        
+        1、数值型
+            
+            整型
+                非常小的整型    TINYINT        1字节 -128 -- 127 0--255（无符号）
+                较小的整型      SMALLINT    2字节 -32768 -- 32767 0--65535
+                中等大小的整型  MEDIUMINT    3字节 
+                标准的整数型    INT    4字节
+                大整数型        BIGINT    8字节
+            浮点型：共M位，小数点后D位
+                FLOAT(M,D) 4字节
+                DOUBLE(M,D)  8字节
+                定点数
+                DECIMAL(M,D)       M+2字节
+
+                浮点数会四舍五入
+
+
+        2、字符型
+            
+            char(m)    最大255  固定长度 m个字节
+                长度变化不大的用char
+                
+            varchar(m)   最大255 m+1个字节
+            可变长度（实际占用空间为准，缺点查找时没有char速度快）
+                长度变化大的，比如文章标题
+
+
+            text  文本数据（文章）
+
+                MEDIUMTEXT
+                LONGTEXT
+
+            blob 二进制数据（相片）
+                MEDIUMBLOB
+                LONGBLDB
+
+            ENUM    枚举 1或2个字节
+                create table tab9(one enum('a','b','c','d'),two
+                set('a','b','c','d');
+
+                insert into tab9 values('a,b','a,b');结果one 无值，two:a,b
+
+            SET     集合 1、2、3、4、8个字节
+
+                枚举一次只能用一个值，集合一次可用多个值，用逗号分隔
+        
+        3、日期型
+
+            DATE        YYYY-MM-DD
+            TIME        hh:mm:ss
+            DATETIME    YYYY-MM-DD hh:mm:ss
+            TIMESTAMP   YYYYMMDDhhmmss  //自动时间
+
+            YEAR        YYYY
+
+            创建表时最好不要使用这些中的时间格式（PHP 中的时间戳）是一整数
+
+            用整数保存时间php:time();
+
+            int
+
+03 MySQL创建数据表（中）
+
+    四、数据字段属性
+        
+        1、 unsigned 可以让空间增加一倍    
+            create table t1(id int unsigned);
+        
+        2、zerofill 
+
+            只能用在数值型字段， 前导0
+
+            该字段自动应用UNSIGNED
+
+            create table t2(num int(5) zerofill,price float(7,2) zerofill,name varchar(10));
+            如上num
+            是5位，如果不够5位，会自动加前导0，如123，查询数据库为00123；同时如果大于5位，按实际倍数存储，不受5位的限限制
+        
+        3、AUTO_INCREMENT 
+
+            只能是整数，数据每增加一条就会自动增加1，字段的值是不允许重复
+
+            NULL 0 留空 都会自动加1
+
+            每个表最好有一个ID字段，设置为自动增涨，auto_incremet
+
+            create table t3（id int auto_increment primary key,name char(10)）;
+            用auto_increment必须要加索引，目的是不能有重复
+
+        4、NULL和NOT NULL
+
+            默认是空
+
+            NULL值
+
+            将来将这个表的数据转为PHP程序的数据时，整数列有NULL转成0吗
+            字符串，字符串NULL PHP '' 0.00 吗？不确定 ，所以
+
+            建议：在创建表时每个字段都不要插入NULL
+
+            create tab4(id int not null,name varchar(30) not null)
+
+
+        5、default
+
+        CREATE TABLE users(
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(30) NOT NULL DEFAULT '',
+            height DOUBLE(10.2) NOT NULL DEFAULT 0.00,
+            age INT NOT NULL DEFAULT 0,
+            sex CHAR(4) NOT NULL DEFAULT '男'
+        );
+
+    五、创建索引
+
+        1、主键索引 PRIMARY
+
+            主要作用是确定数据库表里一条特定数据记录的位置
+
+            最好为每一张数据表定义一个主键
+
+            一个表只能指定一个主键
+
+            主键的值不能为空
+
+            每条记录的主键值都不一样
+
+            create table t6(id int not null primary key,name varchar(50));
+
+            create table t6(id int not null auto_increment,name
+            varchar(50),primary key(id));也可以单独指定主键
+
+        2、唯一索引 UNIQUE
+
+            都可以防止创建重复的值
+
+            每一个表都可以有多个唯一索引
+
+            目的不是提高速度，而是为了避免数据重复
+        
+        3、常规索引 INDEX 如目录的功能
+
+            最重要的技术
+
+            提升数据库的性能 
+
+            可以提高查找的速度，减慢数据列上插入、删除、修改的速度
+
+            和表一样是单独的数据对象，可以单独使用
+
+            也可在创建时创建
+
+            create index ind1 on
+            users(name,age);在表的name,age字段，创建索引名为ind1的索引
+            drop index ind1 on users;
+
+           下面 inde或者key是一样的，创建索引，cuid与csid是索引名
+
+            create table carts(
+                id int not nul,
+                uid int not null,
+                sid int not null,
+                number int not null,
+                prinmary key(id),          //创建主键索引
+                key cuid(uid),
+                index csid(sid)
+            );
+
+        4、全文索引  FULLTEXT
+
+            fulltext类型索引,MyISAM表类型使用，只有在varchar char
+            text文本字符串上使用
+
+            也可以多个数据列使用
+
+            create table books(
+                id int,
+                bookname varchar(30),
+                price double,
+                detail text not null,
+                fulltext(detail,bookname),
+                index ind(price),
+                primary key(id)
+            );
+
+            select * from books where bookname like %php%;//传统写法
+
+            select bookname,price from books where MATCH(detail) AGAINST('php');
+            select match(detail) against('php') from books;
+
+
+04 MySQL创建数据表（下）
+
+    六、数据表类型及存储位置
+
+        show engines;//显示所有的引擎
+
+        MySQL 和大多数数据库不同，MySQL有一个存储引擎概念
+
+        MySQL 可以针对不同的存储引擎需求可以选择最优的存储引擎
+
+        引擎 数据表类型
+        
+        我们只学12个中的MyISAM 和 InnoDB两个
+
+        create table () type InnoDB;
+        create table () engine InnoDB;
+
+        MyISAM表类型是默认的
+
+        选择MyISAM还是选择InnoDB
+
+        注意：在一个MySQL库中可以（创建时）指定不同的表类型
+
+        MyISAM 表类型
+
+            成熟、稳定、易管理 
+
+            OPTIMIZE TABLE 表名 //整理碎片，修复空间
+
+            强调可以快速读取操作
+
+            也有缺点：有一些功能不支持
+
+        InnoDB
+
+            支持一些MyISAM所不支持功能
+
+            占用空间大，速度比较慢
+
+        如何选择：
+
+        功能            MyISAM      InnoDB
+
+        事物处理        不支持      支持
+        数据行锁定      NO          YES
+        外键约束        NO          YES
+        表空间占用      相对小      相对大，最大2倍
+        全文索引        YES         NO
+
+
+    七、MySQL默认字符集
+        ASCII
+        ISO-8859-1/latin1
+        GB2312-80   //不推荐
+        GB13000     //不推荐
+        GBK         //可以用
+        GB18030     //数据支持比较少见
+
+        UTF-32
+        UTF-2
+        UTF-16
+        UTF-8   //强烈推荐
+
+        GBK 2字节   UTF8 3字节
+
+        name varchar(12)    6个汉字 GBK
+        name varchar(12)    4个汉字 UTF8
+
+        MySQL 服务器，数据库、数据表 字段都可以指定不同的字符集
+            show character set;显示支持的所有字符集
+
+            desc information_schema.character_sets;校对规则
+        
+        MySQL 的字符集包括
+            
+            字符集：是用来定义MySQL存储字符的方式
+
+            校对规则：是对规则是定义了比较字符串的方式
+
+            一对多的关系，1个字符集可以对应多个校对规则
+
+                show collation like 'gbk%';
+            
+
+        客户端与服务器交互时
+        character_set_client        客户端
+        character_set_connection    连接时的
+        character_set_results       返回结果
+
+        set names 字符集 同时修改以上三个的值
+            set names gbk;
+        alter database character set gbk;改变库的字符集
+
+        alter table character set gbk;改变表的字符集
+
+
+    八、修改表
+        alter table
+
+         add ,modify(只能改类型)，change（可改字段和类型）
+
+         alter table t1 add name varchar(30) not null;
+
+         alter table t1 add age int unsigned not null default '0';
+
+         alter table t1 add sex varchar(10) not null after name;
+
+         alter table t1 modify sex char(3);
+
+         alter table t1 name username varchar(30)
+
+         alter table t1 rename as users;
+
+
+05 SQL语言的设计与编写（上）
+    
+    SQL语句的各类
+        
+    DDL DML DQL DCL
+
+    数据定义语言（DDL）
+        用于定义和管理数据对象（库、表、索引、视图），包括数据库、数据表等，例如：CREATE、DROP、ALTER等语句。
+
+    数据操作语言(DML)
+        用于操作数据库对象中所包含的数据。例如：INSERT、UPDATE、DELETE语句;
+
+    数据查询语言（DQL）
+        用于查询数据库对象中所包含的数据，能够进行单表查询、连接查询、嵌套查询，以及集合查询等各种复杂程度不同的数据库查询，并将数据返回到客户机中显示。例如：SELECT语句。
+
+    数据控制语句（DCL)
+        是用来管理数据库的语言，包含管理权限及数据更改。例如：GRANT、REVOKE、COMMIT、ROLLBACK等语句。
+
+    对程序员来说
+
+        创建表（为项目设计表）
+
+        增、删、改、查
+
+        插入表数据insert
+
+        insert into 表名([字段列表])  velues(值列表1)，(值列表2) ...
+            
+            1、如果在表名后没有给出字段列表，则值列表必须列出所有字段的值，且按默认顺序来
+            2、所有需要写字段名的地方都不加单引号，但所有值建议都要以字符形式使用
+            3、建议在插入数据时，最好给出字段列表，则值要和字段列表对象即可，可以不按表中字段中的顺序
+            4、一次可插入多个值，用逗号分开
+
+        update 表名 set 字段=‘值’ [条件]
+        条件是确定要更改的记录，可以通过条件指定一条也可指定多条
+
+        delete from 表名 [条件]
+
+        select
+
+        都可以使用各种运算符号（可以把字段当作一个变量）
+
+        只要你想更新、删除、查找，只要写对条件就能准确找到要管理的一条或多条语句
+
+
+06 SQL语言的设计与编写（下）
+        select 查询
+
+            SELECT [ALL | DISTINCT]
+                {*|table.*|[table.]field1[as aliss1][....]}
+
+            FROM 表名[],表2
+
+            [WHERE ...]
+
+            [GROUP BY ...]
+
+            [HAVING ...]
+
+            [ORDER BY ...]
+
+            [LIMIT count]
+
+            使用SELECT查询语言，目的就可以按你想法将数据查出来，将返回给你
+            
+
+            1、字段 要列出要查询的字段
+                select * from users;
+
+                select name fom users;
+
+                select users.id,users.name from users;
+
+
+
+            2、可以为每个字段真个别名后面会用到(关键字，多表查询)，表也可起别名（多表查询） ，用as或空格分开
+                
+                select price as bookprice , name as bookname from products;
+
+                select price  bookprice , name  bookname from products;(可以不用as)
+
+
+            
+            3、使用distinct作用：整个查询列表，取消重复的数据，只返一个，而不是单独的一列
+
+                select distinct price bookprice from products;
+
+
+            4、在SQL语句中使用表达式的列（算术运行符号，可以使用条件，逻辑运算符号）
+                
+                select 1+1;
+
+                浏览数量加1，一条语句实现
+                updata products set num=num+1 where id=27;
+
+                select name ,price ,price*0.8 dzprice from products;新增了打8析的列,dzprice
+
+            5、WHERE 可以在SELECT UPDATE DELETE中
+
+            逻辑运算符（多个条件组合）
+
+                && || !
+
+            比较运算符号
+
+                =
+                <=> 和等号作用一样，但可以用于NULL比较
+                !=  <>
+
+                IS NULL
+
+                IS NOT NULL
+
+                BETWEEN AND 
+
+                    select * from product where id>10 and id<20;
+                    select * from product where id between 10 and 20;id在10和20之间，包括10和20
+
+                NOT BETWEEN AND
+
+                LIKE  _（任意一个字符）和%（0个或多个任意字符）两个通配符
+
+                    select * from products where name like java__;可以匹配到javaaa,javabb;
+
+                    select * from products where name like java___;可以匹配到javaccc,javabbc;
+
+                     select * from products where name like %java%;名字中包含java的，如aajava,javaoo;asdfjavalklj;
+
+                NOT LIKE
+
+                    与LIKE反的
+
+                IN
+
+                    select * from products where id in(5,10,15,20,25);
+
+                REGEXP RLIKE(正则)
+
+                    select * from products where name regexp '^a';名字a开头的
+
+            6、多表查询(连接查询)
+
+                select cats.name,products.name,products.price from cats,products;
+
+                select c.name , p.name , p.price from cats c,products as p;
+
+                select c.name cname , p.name pname , p.price from cats c,products as p;
+
+                select c.name cname , p.name pname , p.price from cats c,products as p where c.id=p.cid and c.id=3;
+
+            7、嵌套查询 子查询
+
+                select * from products where pid in(select id from cats where name like 'j%');
+
+
+
+            8、order by 字段 [asc正序] desc 倒序
+
+            9、limit
+
+            select * from products where id>20 order by id asc limit 0,1;取id>20，从0处取1条记录
+
+            10、group by分组
+
+                count() 
+                sum()
+                avg()
+                max()
+                min()
+
+            select cid,count(*),price,sum(price),max(price),min(price),avg(price) from products group by cid; 按cid分组
+
+            select cid,count(*),price,sum(price),max(price),min(price),avg(price) from products group by cid having avg(price)>50; 平均价格大于50的
+
+7、设计SQL语句时常用的MySQL内置函数
+
+    用在SELECT语句，能及子句where order by having updata delete等
+
+    常用的几类函数：
+
+    一、字符串函数
+
+        php中用的函数，MySQL中大部分也提供
+
+        1、CONCAT(S1,S2....Sn),把传入的参数连接成一个字符串
+
+        2、INSERT(str , x , y , insert);将字符串x位置开始，y个字符串长度替换为字符串insert
+
+            select insert('abcdefg',2,3,'hello');结果abhellofg;
+
+        3、LOWER(str) UPER(str) ,大小写转换
+
+        4、LEFT(str,x) RIGHT(str,x);分别返回最左边的x字符，和最右的x个字符，如果第二个参数为空，什么也不返回
+
+        5、LPAD(str , n ,pad) RPAD(str, n , pad);用字符串pad对str最左边和最右边进行填充，直到字符串长度为n
+
+            select name ,lpad(name,10,'$') ,rpad(naem,10,'$') from users;
+
+        6、TRIM(str) LTRIM(str) RTRIM(str)去掉字符串两边，左边和右边的空格
+
+            \G
+
+        7、replace(str,a,b)用字符串b替换所有字符串中所有出现a的字符串
+
+        8、strcmp(s1,s2)如果s1比s2小，返回-1,如果s1比s2大返回1，如果等返回0
+
+        9、substring(str,x,y)返回字符串中第x位置起y个字符串长度的字符串
+
+
+    二、数值函数
+        ABS(x) 返回绝对值
+        ceil(x)返回大于X的最小整数2.1 2.5 2.9  3
+        floor(x)返回小于x的最大整数2.1 2.5 2.9 2
+        mod(x,y)返回x/y的模（余数）
+        rand() 0-1之间
+        round(x,y)返回参数x的四舍五入的有y位小数的值
+        truncate(x,y) 返回数字x截断为y位小数的结果
+
+    三、日期函数
+
+        当用PHP的时间戳来完成
+
+        curdate();
+
+        curtime();
+        
+        now();
+
+        unix_timestamp(now()) 当前的时间戳
+
+        from_unixtime
+
+        week(now())当前周
+
+        houe(curtime());当前的小时
+
+        minute(curtime())当前的分
+
+    四、流程控制函数
+
+        if(value,t,f) ;value为真，取t,反则为f
+        ifnull(value1,value2);value1不为空返回value1，否则返回value2;
+        case wben [value1] then[result1] else [default] end
+    
+    五、其它函数
+
+        database()
+
+        varsion()
+
+        user()
+
+        inet_aton(ip) 返回ip地址的网络字节顺序
+
+        inet_ntoa(字节序)  与inet_aton(ip)反
+
+        password() 是用来设置mysql系统用户的密码
+
+        md() 网站用户的密码加密
+
+8、在PHP中使用MySQL扩展库操作数据库
+
+9、在PHP中使用MySQL扩展库处理结果集
+
+    //step 1
+    $link = mysql_connect('localhost','root','123465') or die(" connect eror!");
+
+    //step 2
+    mysql_select_db('xsphpdb') or die("select db error!");
+
+
+    //exexute SQL
+    $sql="select id , name , price ,desn from shops";
+
+
+    //result
+    $result=mysql_query($sql);
+
+    //close
+    mysql_close();
+
+
+    分页条件
+
+    1、总数
+                
+
+15、MySQL的视图
+
+    1、什么是视图
+        视图是存放数据的一个接口，也可以说是虚拟表，这些数据可以是一个或几个基本（视图）的数据，也可是用户自己定义的数据，其实视图里面不存放数据。数据还是存在基表里面的，基表数据发生变化，视图里的数据也随之变化，视图里的数据发生变化，基表里的数据也发生变化
+
+    2、视图的作用
+
+        视图可以让查询变的很清楚（复杂的SQL语句变得很简单，如可以将多张表组合起来）
+        保护数据库的重要数据
+
+    3、创建视图
+        create [or replace][algorithm={undefined|merge|temptable}]
+        view view_name[(colum_list)] as select_statement
+        [with [cascaded|local] check option]
+
+        如：
+        create or replace view stu3 as select name,age,sex,email from student where age>40;
+
+        create view stu4(`stu name`,`stu age`,`stu sex`) as select name,age,sex from student;
+            注意有空格要加反引号
+
+
+        视图有三种类型
+
+            Merge:会将引用视图的语句的文本与视图定义结合起来，使用得视图定义的某一部分取代语句的对应部分
+
+            Temptable
+
+            undefined
+
+        with local check option ；    local只要满足视图的条件就可以更新
+
+        with cascaded check option；  cascaded则是必须满足所有针对视图的条件，才可以更新
+
+    四、视图的操作
+
+    五、更改视图
+
+        alter view stuv as select * from student;跟创建几乎一样
+        
+        drop view stu8;
+
+    六、查看视图
+        show table status like 'stu2' \G;状态
+
+        show create view stu2 \G;创建时的语法
+
+    七、PHP中使用视图
+        1、登录视图
+
+            create view user_view(username,password) as select name,pass from users;
+
+
+16、PDO的介绍安装及对象初始化
+
+    php.ini 配置
+        extension=php_pdo.dll
+        extension=php_pdo_mysql.dll
+        extension=php_pdo_sqlite.dll
+
+
+    --with-pdo-mysql=/user/local/mysql          LINUX配置
+
+    三个类：
+        PDO类，和数据库连接有关的类（连接，执行SQL语句）
+
+        PDOStatement类，准备语句，处理结果集
+
+        PDOException类，异常
+
+        很多常量
+
+        会使用以上部分就会使用PDO
+
+
+        创建对象
+
+        dsn ( data source name )
+
+
+
+
+        
+        
+
+        
+
+
+
+
+            
+
+
+
+
+
+
+
+            
+    
+       
+命令：
+    \s 显示状态
+
+    ? +命令      //查看命令的帮助， 如 ? alter table;//查看修改表的命令
+
